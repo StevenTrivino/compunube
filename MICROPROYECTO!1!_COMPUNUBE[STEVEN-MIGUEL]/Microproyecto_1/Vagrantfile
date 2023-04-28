@@ -1,0 +1,45 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+if Vagrant.has_plugin? "vagrant-vbguest"
+config.vbguest.no_install = true
+config.vbguest.auto_update = false
+config.vbguest.no_remote = true
+end
+
+config.vm.define :server1 do |server1|
+server1.vm.box = "bento/ubuntu-20.04"
+server1.vm.network :private_network, ip: "192.168.100.2"
+server1.vm.hostname = "server1"
+server1.vm.provision "file", source: "./provision/server1/config_1.json", destination: "/home/vagrant/config_1.json"
+server1.vm.provision "file", source: "provision/consul.service", destination: "/home/vagrant/consul.service"
+server1.vm.provision "file", source: "provision/web.service", destination: "/home/vagrant/web.service"
+server1.vm.provision "shell", path: "./provision/server1/script1.sh"
+end
+
+config.vm.define :server2 do |server2|
+server2.vm.box = "bento/ubuntu-20.04"
+server2.vm.network :private_network, ip: "192.168.100.3"
+server2.vm.hostname = "server2"
+server2.vm.provision "file", source: "./provision/server2/config_2.json", destination: "/home/vagrant/config_2.json"
+server2.vm.provision "file", source: "provision/consul.service", destination: "/home/vagrant/consul.service"
+server2.vm.provision "file", source: "provision/web.service", destination: "/home/vagrant/web.service"
+server2.vm.provision "shell", path: "./provision/server2/script2.sh"
+end
+
+config.vm.define :haproxy do |haproxy|
+haproxy.vm.box = "bento/ubuntu-20.04"
+haproxy.vm.network :private_network, ip: "192.168.100.4"
+haproxy.vm.hostname = "haproxy"
+haproxy.vm.provision "file", source: "./provision/haproxy/config_3.json", destination: "/home/vagrant/config_3.json"
+haproxy.vm.provision "file", source: "provision/consul.service", destination: "/home/vagrant/consul.service"
+haproxy.vm.provision "file", source: "provision/web.service", destination: "/home/vagrant/web.service"
+haproxy.vm.provision "file", source: "provision/503.http", destination: "/home/vagrant/503.http"
+haproxy.vm.provision "file", source: "./provision/haproxy/haproxy.cfg", destination: "/home/vagrant/haproxy.cfg"
+haproxy.vm.provision "shell", path: "./provision/haproxy/script3.sh"
+
+
+end
+
+end
