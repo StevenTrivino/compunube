@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: punto33-deployment
+spec:
+  selector:
+    matchLabels:
+      run: punto33 
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: punto33
+    spec:
+      containers:
+      - name: punto33
+        image: stevenkazuto/punto3
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: punto33
+  labels:
+    run: punto33
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 3000
+  selector:
+    run: punto33
